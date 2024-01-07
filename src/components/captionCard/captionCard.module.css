@@ -5,6 +5,16 @@
   margin-bottom: 20px;
 }
 
+.votingContainer {
+  cursor: pointer;
+  border: 1px solid var(--text);
+  border-radius: 5px;
+}
+
+.selectedVotingContainer {
+  background-color: rebeccapurple;
+}
+
 .top {
   display: flex;
 }

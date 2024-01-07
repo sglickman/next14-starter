@@ -1,15 +1,24 @@
 .container {
   display: flex;
-  gap: 100px;
+  flex-direction: column;
 }
 
 .top {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
+  gap: 50px;
 }
 
 .title {
+  text-align: center;
+}
 
+.detailsContainer {
+  border-top: 1px solid var(--text);
+  padding-top: 50px;
+  display: flex;
+  gap: 30px;
+  justify-content: space-around;
 }
 
 .desc {
@@ -21,6 +30,8 @@
 }
 
 .captions {
+  border-top: 1px solid var(--text);
+  padding-top: 50px;
   display: flex;
   flex-wrap: wrap;
   gap: 50px;

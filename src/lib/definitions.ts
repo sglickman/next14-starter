@@ -46,9 +46,9 @@ export type Workshop = {
 };
 
 export const enum ContestMode {
-  SUBMITTING_CAPTIONS = 1,
-  VOTING_ON_CAPTIONS = 2,
-  WORKSHOPPING = 3,
-  SUBMITTING = 4,
-  CLOSED = 5,
+  SUBMITTING_CAPTIONS = "Open For Captions",
+  VOTING_ON_CAPTIONS = "Caption Voting",
+  WORKSHOPPING = "Caption Workshopping",
+  SUBMITTING = "Final Submission",
+  CLOSED = "Closed",
 }

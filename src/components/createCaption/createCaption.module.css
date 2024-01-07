@@ -1,0 +1,64 @@
+.container {
+  border-top: 1px solid var(--text);
+  padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.title {
+  text-align: center;
+}
+
+.imgContainer {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.img {
+  object-fit: contain;
+}
+
+.captionContainer, .noteContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+  /* justify-content: space-around; */
+}
+
+.captionInputContainer, .captionNoteContainer {
+  height: 125px;
+  width: 500px;
+  margin: auto;
+}
+
+.captionNoteContainer {
+  height: 36px;
+  width: 500px;
+  margin: auto;
+}
+
+.captionInput, .noteInput {
+  padding: 8px;
+  width: 100%;
+  height: 100%;
+  font-size: 14pt;
+  outline: none;
+  border: 1px solid var(--text);
+  border-radius: 5px;
+}
+
+.buttonContainer {
+  margin: auto;
+}
+
+.submitButton {
+  padding: 20px;
+  min-width: 120px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--btn);
+}
