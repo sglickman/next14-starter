@@ -1,0 +1,33 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.contest {
+  width: 30%;
+}
+
+.contests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-around;
+}
+
+@media screen and (max-width: 1280px) {
+  .contest {
+    width: 45%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .contest {
+    width: 100%;
+  }
+}

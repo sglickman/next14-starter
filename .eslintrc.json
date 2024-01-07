@@ -3,6 +3,9 @@
     "eslint:recommended",
     "next/core-web-vitals"
   ],
+  "env": {
+    "es6": true,
+  }
   "rules": {
     "react/prop-types": "off",
     "no-unused-vars": "warn"

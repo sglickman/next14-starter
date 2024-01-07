@@ -1,0 +1,43 @@
+.container {
+  display: flex;
+  gap: 100px;
+}
+
+.top {
+  display: flex;
+  justify-content: space-around;
+}
+
+.title {
+
+}
+
+.desc {
+
+}
+
+.bottom {
+
+}
+
+.captions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+}
+
+.caption {
+  width: 30%;
+}
+
+@media (max-width: 1280px) {
+  .caption {
+    width: 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .caption {
+    width: 100%;
+  }
+}
