@@ -13,9 +13,11 @@ const CaptionSchema = z.object({
   created_at: z.date(),
   note: z.string().optional(),
   author: z.coerce.number().gt(0, { message: "Invalid author id." }),
-  caption: z.string({
-    invalid_type_error: "Please enter a caption.",
-  }),
+  caption: z
+    .string({
+      invalid_type_error: "Please enter a caption.",
+    })
+    .min(1),
 });
 
 const CreateCaptionSchema = CaptionSchema.omit({ id: true, created_at: true });

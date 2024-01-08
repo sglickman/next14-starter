@@ -55,20 +55,22 @@ const CreateCaption = ({
             fill
           />
         </div>
-        <p className={styles.messageText}>{state?.message}</p>
         <div className={styles.captionContainer}>
           <div className={styles.captionInputContainer}>
-            <textarea
-              id="caption"
-              name="captionText"
-              value={formValues?.captionText}
-              onChange={(e) =>
-                setFormValues({ ...formValues, captionText: e.target.value })
-              }
-              className={`${styles.captionInput} ${caslon_italics.className}`}
-              // defaultValue="Proposed Caption"
-              aria-describedby="caption-error"
-            />
+            <label className={styles.labelWrapper}>
+              <textarea
+                id="caption"
+                name="captionText"
+                value={formValues?.captionText}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, captionText: e.target.value })
+                }
+                className={`${styles.input} ${styles.captionInput} ${caslon_italics.className}`}
+                // defaultValue="Proposed Caption"
+                aria-describedby="caption-error"
+              />
+              <span className={styles.label}>Your Caption</span>
+            </label>
           </div>
           <div className={styles.captionInputErrorContainer} id="caption-error">
             {state?.errors?.caption &&
@@ -80,21 +82,21 @@ const CreateCaption = ({
           </div>
         </div>
         <div className={styles.noteContainer}>
-          <label htmlFor="note" className={styles.formLabel}>
-            Note (optional)
-          </label>
           <div className={styles.captionNoteContainer}>
-            <textarea
-              id="note"
-              name="noteText"
-              value={formValues?.noteText}
-              onChange={(e) =>
-                setFormValues({ ...formValues, noteText: e.target.value })
-              }
-              className={`${styles.noteInput} ${caslon.className}`}
-              // defaultValue="Note"
-              aria-describedby="note-error"
-            />
+            <label className={styles.labelWrapper}>
+              <textarea
+                id="note"
+                name="noteText"
+                value={formValues?.noteText}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, noteText: e.target.value })
+                }
+                className={`${styles.input} ${styles.noteInput} ${caslon.className}`}
+                // defaultValue="Note"
+                aria-describedby="note-error"
+              />
+              <span className={styles.label}>Note (optional)</span>
+            </label>
           </div>
           <div className={styles.noteInputErrorContainer} id="note-error">
             {state?.errors?.note &&
@@ -105,6 +107,9 @@ const CreateCaption = ({
               ))}
           </div>
         </div>
+        {state?.message && (
+          <p className={styles.messageText}>{state?.message}</p>
+        )}
         <div className={styles.buttonContainer}>
           <button className={styles.submitButton} type="submit">
             Create Caption
