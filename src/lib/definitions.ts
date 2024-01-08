@@ -36,6 +36,11 @@ export type TopSevenVote = {
   created_at: Date;
 };
 
+export type CaptionVoteCount = {
+  caption_id: number;
+  vote_count: number;
+}
+
 export type Workshop = {
   id: number;
   author: number;

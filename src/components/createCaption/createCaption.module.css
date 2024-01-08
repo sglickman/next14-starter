@@ -1,6 +1,6 @@
 .container {
   border-top: 1px solid var(--text);
-  padding-top: 50px;
+  padding-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 50px;
@@ -34,9 +34,12 @@
   margin: auto;
 }
 
+.messageText {
+  margin: auto;
+}
+
 .captionNoteContainer {
   height: 36px;
-  width: 500px;
   margin: auto;
 }
 
@@ -62,3 +65,4 @@
   border-radius: 5px;
   background-color: var(--btn);
 }
+

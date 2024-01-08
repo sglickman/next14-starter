@@ -6,13 +6,15 @@
 }
 
 .votingContainer {
+  padding: 8px;
   cursor: pointer;
-  border: 1px solid var(--text);
+  /* border: 1px solid var(--text); */
   border-radius: 5px;
 }
 
 .selectedVotingContainer {
-  background-color: rebeccapurple;
+  box-shadow: 0 0 20px 15px var(--btn);
+  /* background-color: var(--btn); */
 }
 
 .top {

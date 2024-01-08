@@ -142,6 +142,8 @@ async function seedEmails(client: any) {
         `;
       })
     );
+
+    console.log(`Seeded ${insertedEmails.length} emails.`);
   } catch (error) {
     console.log("Error seeding emails: ", error);
     throw error;
@@ -236,11 +238,11 @@ async function seedWorkshops(client: any) {
             ${workshop.workshop},
             ${workshop.note || ""},
             ${workshop.created_at},
-          ) ON CONFLICT (id) DO NOTHING;
+          ) ON CONFLICT DO NOTHING
         `;
       })
     );
-  
+
     console.log(`Seeded ${insertedWorkshops.length} workshops.`);
   } catch (error) {
     console.log("Error seeding workshops: ", error);
@@ -260,7 +262,8 @@ async function seedTopSevenVotes(client: any) {
         id SERIAL PRIMARY KEY,
         voter INTEGER,
         caption_id INTEGER,
-        created_at TIMESTAMPTZ
+        created_at TIMESTAMPTZ,
+        UNIQUE (voter, caption_id)
       );
     `;
 
@@ -280,7 +283,7 @@ async function seedTopSevenVotes(client: any) {
             ${topSevenVote.voter},
             ${topSevenVote.caption_id},
             ${topSevenVote.created_at}
-          ) ON CONFLICT (id) DO NOTHING;
+          ) ON CONFLICT DO NOTHING;
         `;
       })
     );
@@ -301,6 +304,7 @@ async function main() {
   await seedCaptions(client);
   await seedWorkshops(client);
   await seedTopSevenVotes(client);
+  await seedEmails(client);
   await seedSubmissions(client);
 
   await client.release();

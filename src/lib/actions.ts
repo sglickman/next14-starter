@@ -5,13 +5,14 @@ import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Caption, TopSevenVote } from "./definitions";
+import { auth, signOut } from "./auth";
 
 const CaptionSchema = z.object({
   id: z.number(),
   contest_id: z.coerce.number().gt(0, { message: "Invalid contest id." }),
   created_at: z.date(),
   note: z.string().optional(),
-  author: z.coerce.number().gt(0, { message: "Invalid author id."}),
+  author: z.coerce.number().gt(0, { message: "Invalid author id." }),
   caption: z.string({
     invalid_type_error: "Please enter a caption.",
   }),
@@ -21,14 +22,20 @@ const CreateCaptionSchema = CaptionSchema.omit({ id: true, created_at: true });
 
 // This is temporary
 export type State = {
+  captionText?: string;
+  noteText?: string;
   errors?: {
     caption?: string[];
     note?: string[];
   };
   message?: string | null;
+  success?: boolean;
 };
 
-export async function createCaption(prevState: State, formData: FormData) {
+export async function createCaption(
+  prevState: State | undefined,
+  formData: FormData
+) {
   console.log(formData);
   // Validate form data
   const validatedFields = CreateCaptionSchema.safeParse({
@@ -69,10 +76,18 @@ export async function createCaption(prevState: State, formData: FormData) {
 
   // Revalidate the cache for the contest page and redirect the user.
   revalidatePath(`/contests/${contest_id}`);
-  redirect(`/contests`);
+  return {
+    message: "Successfully created caption.",
+    success: true,
+  } as State;
+  // redirect(`/contests`);
 }
 
-export async function removeVote(captionId: number, userId: number, contestId: number) {
+export async function removeVote(
+  captionId: number,
+  userId: number,
+  contestId: number
+) {
   console.log("Removing vote", captionId, userId);
   try {
     await sql`
@@ -87,11 +102,16 @@ export async function removeVote(captionId: number, userId: number, contestId: n
   }
 }
 
-export async function addVote(captionId: number, userId: number, contestId: number) {
+export async function addVote(
+  captionId: number,
+  userId: number,
+  contestId: number
+) {
   try {
     const res = await sql`
       INSERT INTO contest_top_seven_votes (id, voter, caption_id, created_at)
       VALUES (DEFAULT, ${userId}, ${captionId}, ${new Date().toISOString()})
+      ON CONFLICT (voter, caption_id) DO NOTHING
     `;
     revalidatePath(`/contests/${contestId}`);
     console.log("Successfully added vote.");
@@ -99,4 +119,12 @@ export async function addVote(captionId: number, userId: number, contestId: numb
     console.log("Error adding vote: ", error);
     throw error;
   }
+}
+
+export async function handleLogout() {
+  await signOut();
+}
+
+export async function getSession() {
+  return await auth();
 }

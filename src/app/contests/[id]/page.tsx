@@ -6,6 +6,7 @@ import {
   ContestMode,
   User,
   TopSevenVote,
+  CaptionVoteCount,
 } from "@/lib/definitions";
 import { format } from "date-fns/format";
 import { Suspense } from "react";
@@ -16,12 +17,12 @@ import ContestDetail from "@/components/contestDetail/page";
 import { getContestMode } from "@/lib/contest-mode";
 import CreateCaption from "@/components/createCaption/page";
 import { unstable_noStore } from "next/cache";
+import { auth } from "@/lib/auth";
 // import { topSevenVotes } from "@/lib/initial-data";
 
 const getContest = async (contestId: string) => {
-  const id = parseInt(contestId);
   const res = await sql`
-    SELECT * FROM contests WHERE id = ${id};
+    SELECT * FROM contests WHERE id = ${parseInt(contestId)};
   `;
   if (res.rowCount < 1) {
     throw new Error("Contest not found");
@@ -38,45 +39,55 @@ const getUsers = async () => {
 
 const getCaptions = async (contestId: string) => {
   // unstable_noStore();
-  const id = parseInt(contestId);
   const res = await sql`
     SELECT contest_captions.*, contests.id AS contest_id 
     FROM contest_captions 
       INNER JOIN contests 
       ON contest_captions.contest_id = contests.id 
-    WHERE contest_id = ${id}
+    WHERE contest_id = ${parseInt(contestId)}
     ORDER BY contest_captions.id DESC;
   `;
   return res.rows as Caption[];
 };
 
-const getTopSevenVotes = async (contestId: string, userId: number) => {
-  unstable_noStore();
-  const contest_id = parseInt(contestId);
+const getTopSevenVotes = async (contestId: string, userId: string) => {
   const res = await sql`
     SELECT contest_top_seven_votes.*, contest_captions.contest_id AS contest_id
     FROM contest_top_seven_votes
       INNER JOIN contest_captions
       ON contest_top_seven_votes.caption_id = contest_captions.id
-    WHERE voter = ${userId} AND contest_id = ${contest_id};
+    WHERE voter = ${parseInt(userId)} AND contest_id = ${parseInt(contestId)};
   `;
-  console.log(res.rows);
   return res.rows as TopSevenVote[];
 };
 
+const getCaptionVoteCounts = async (contestId: string) => {
+  const res = await sql`
+    SELECT COUNT(*) AS vote_count, contest_top_seven_votes.caption_id
+    FROM contest_top_seven_votes
+    INNER JOIN contest_captions
+      ON contest_top_seven_votes.caption_id = contest_captions.id
+    WHERE contest_id = ${parseInt(contestId)}
+    GROUP BY caption_id
+    ORDER BY vote_count DESC;
+  `;
+  return res.rows as CaptionVoteCount[];
+};
+
 const getWorkshops = async (contestId: string) => {
-  const id = parseInt(contestId);
   return [] as Workshop[];
 };
 
 const getContestData = async (id: string) => {
+  const session = await auth();
+  const userId = session?.user?.id || "0";
   // const { id } = params;
   const contest = await getContest(id);
   const users = await getUsers();
   const captions = await getCaptions(id);
   const workshops = await getWorkshops(id);
-  const topSevenVotes = await getTopSevenVotes(id, 1);
-  console.log(topSevenVotes);
+  const topSevenVotes = await getTopSevenVotes(id, userId);
+  const captionVoteCounts = await getCaptionVoteCounts(id);
 
   return {
     contest,
@@ -84,14 +95,56 @@ const getContestData = async (id: string) => {
     captions,
     workshops,
     topSevenVotes,
+    captionVoteCounts,
   };
+};
+
+const getTopCaptionVoteCounts = (
+  captionVoteCounts: CaptionVoteCount[],
+  limit: number
+) => {
+  const top: CaptionVoteCount[] = [];
+  let lastCount = captionVoteCounts[0].vote_count;
+  for (let i = 0; i < captionVoteCounts.length; i++) {
+    if (top.length < limit || lastCount === captionVoteCounts[i].vote_count) {
+      top.push(captionVoteCounts[i]);
+      lastCount = captionVoteCounts[i].vote_count;
+    } else {
+      break;
+    }
+  }
+  return top;
 };
 
 const SingleContest = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
-  const { contest, users, captions, workshops, topSevenVotes } =
-    await getContestData(id);
-  const contestMode = ContestMode.VOTING_ON_CAPTIONS || getContestMode(contest);
+  const {
+    contest,
+    users,
+    captions,
+    workshops,
+    topSevenVotes,
+    captionVoteCounts,
+  } = await getContestData(id);
+  const session = await auth();
+  const topCaptionVoteCounts = getTopCaptionVoteCounts(captionVoteCounts, 7);
+  const topCaptions = captions.filter((caption) =>
+    topCaptionVoteCounts.find((vote) => vote.caption_id === caption.id)
+  );
+  topCaptions.sort((a, b) => {
+    const aVoteCount = topCaptionVoteCounts.find(
+      (vote) => vote.caption_id === a.id
+    )?.vote_count;
+    const bVoteCount = topCaptionVoteCounts.find(
+      (vote) => vote.caption_id === b.id
+    )?.vote_count;
+    if (aVoteCount && bVoteCount) {
+      return bVoteCount - aVoteCount;
+    }
+    return 0;
+  });
+  const contestMode =
+    ContestMode.SUBMITTING_CAPTIONS || getContestMode(contest);
   return (
     <div className={styles.container}>
       <div className={styles.top}>
@@ -112,30 +165,55 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
             <ContestDetail
               title="My Votes"
               value={topSevenVotes.length.toString()}
-              // .filter((vote) => vote.voter === 1)
-              // .length.toString()}
             />
           )}
         </div>
         {contestMode === ContestMode.SUBMITTING_CAPTIONS && (
-          <CreateCaption contest={contest} />
+          <CreateCaption contest={contest} session={session} />
         )}
         <p className={styles.desc}></p>
       </div>
       <div className={styles.bottom}>
-        <div className={styles.captions}>
-          {captions.map((caption) => (
-            <div className={styles.caption} key={caption.id}>
-              <CaptionCard
-                contest={contest}
-                contestMode={contestMode}
-                caption={caption}
-                users={users}
-                workshops={workshops}
-                topSevenVotes={topSevenVotes}
-              />
+        {(contestMode === ContestMode.WORKSHOPPING ||
+          contestMode === ContestMode.SUBMITTING ||
+          contestMode === ContestMode.CLOSED) && (
+          <div className={styles.topCaptionsContainer}>
+            <h2 className={styles.title}>Top Captions</h2>
+            <div className={styles.captions}>
+              {topCaptions.map((caption) => (
+                <div className={styles.caption} key={caption.id}>
+                  <CaptionCard
+                    session={session}
+                    contest={contest}
+                    contestMode={contestMode}
+                    caption={caption}
+                    users={users}
+                    workshops={workshops}
+                    topSevenVotes={topSevenVotes}
+                    topCaptionVoteCounts={topCaptionVoteCounts}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+        )}
+        <div className={styles.captionsContainer}>
+          <h2 className={styles.title}>All Captions</h2>
+          <div className={styles.captions}>
+            {captions.map((caption) => (
+              <div className={styles.caption} key={caption.id}>
+                <CaptionCard
+                  contest={contest}
+                  contestMode={contestMode}
+                  caption={caption}
+                  users={users}
+                  workshops={workshops}
+                  topSevenVotes={topSevenVotes}
+                  topCaptionVoteCounts={topCaptionVoteCounts}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
