@@ -102,11 +102,15 @@ const getTopCaptionVoteCounts = (
   limit: number
 ) => {
   const top: CaptionVoteCount[] = [];
-  let lastCount = captionVoteCounts[0].vote_count;
+  console.log(captionVoteCounts);
+  if (captionVoteCounts.length < 1) {
+    return top;
+  }
+  let lastCount = captionVoteCounts[0]?.vote_count || 0;
   for (let i = 0; i < captionVoteCounts.length; i++) {
-    if (top.length < limit || lastCount === captionVoteCounts[i].vote_count) {
+    if (top.length < limit || lastCount === captionVoteCounts[i]?.vote_count) {
       top.push(captionVoteCounts[i]);
-      lastCount = captionVoteCounts[i].vote_count;
+      lastCount = captionVoteCounts[i]?.vote_count;
     } else {
       break;
     }
