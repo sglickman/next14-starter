@@ -9,14 +9,12 @@ import {
   CaptionVoteCount,
 } from "@/lib/definitions";
 import { format } from "date-fns/format";
-import { Suspense } from "react";
 
 import CaptionCard from "@/components/captionCard/captionCard";
 import { sql } from "@vercel/postgres";
 import ContestDetail from "@/components/contestDetail/page";
 import { getContestMode } from "@/lib/contest-mode";
 import CreateCaption from "@/components/createCaption/page";
-import { unstable_noStore } from "next/cache";
 import { auth } from "@/lib/auth";
 // import { topSevenVotes } from "@/lib/initial-data";
 

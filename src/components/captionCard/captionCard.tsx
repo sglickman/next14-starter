@@ -13,11 +13,10 @@ import {
 } from "@/lib/definitions";
 
 import { caslon_italics } from "@/styles/fonts";
-import { addVote, getSession, removeVote } from "@/lib/actions";
-import { auth } from "@/lib/auth";
+import { addVote, removeVote } from "@/lib/actions";
 import { Session } from "next-auth";
 
-const CaptionCard = async ({
+const CaptionCard = ({
   session,
   contest,
   contestMode,
@@ -43,17 +42,9 @@ const CaptionCard = async ({
       return;
     }
     if (topSevenVotes.find((vote) => vote.caption_id === id)) {
-      try {
-        await removeVote(caption.id, currentuser.id, contest.id);
-      } catch (error) {
-        throw error;
-      }
+      await removeVote(caption.id, currentuser.id, contest.id);
     } else {
-      try {
-        await addVote(caption.id, currentuser.id, contest.id);
-      } catch (error) {
-        throw error;
-      }
+      await addVote(caption.id, currentuser.id, contest.id);
     }
   };
   return (
