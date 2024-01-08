@@ -203,6 +203,7 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
             {captions.map((caption) => (
               <div className={styles.caption} key={caption.id}>
                 <CaptionCard
+                  session={session}
                   contest={contest}
                   contestMode={contestMode}
                   caption={caption}

@@ -27,7 +27,7 @@ const CaptionCard = async ({
   topSevenVotes,
   topCaptionVoteCounts,
 }: {
-  session: Session;
+  session: Session | null;
   contest: Contest;
   contestMode: ContestMode;
   caption: Caption;
