@@ -8,7 +8,7 @@ import {
   TopSevenVote,
   CaptionVoteCount,
 } from "@/lib/definitions";
-import { format } from "date-fns/format";
+import { format } from "date-fns-tz";
 
 import CaptionCard from "@/components/captionCard/captionCard";
 import { sql } from "@vercel/postgres";
@@ -81,6 +81,7 @@ const getContestData = async (id: string) => {
   const userId = session?.user?.id || "0";
   // const { id } = params;
   const contest = await getContest(id);
+  console.log("contest", contest);
   const users = await getUsers();
   const captions = await getCaptions(id);
   const workshops = await getWorkshops(id);
@@ -160,7 +161,8 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
             title="Final Deadline"
             value={`${format(
               contest.final_contest_deadline,
-              "LLLL dd, yyyy, HH:mm"
+              "LLLL dd, yyyy, HH:mm",
+              { timeZone: "America/New_York" }
             )} ET`}
           />
           {contestMode === ContestMode.VOTING_ON_CAPTIONS && (
