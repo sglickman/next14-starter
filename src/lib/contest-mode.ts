@@ -5,11 +5,12 @@ export const getContestMode = (contest: Contest) => {
   if (now > contest.final_contest_deadline) {
     return ContestMode.CLOSED;
   }
-  if (now < contest.first_deadline) {
+  const first_deadline = contest.first_deadline;
+  if (now < first_deadline) {
     return ContestMode.SUBMITTING_CAPTIONS;
   }
-  const voting_deadline = contest.first_deadline;
-  voting_deadline.setDate(voting_deadline.getDate() + 1);
+  const voting_deadline = contest.voting_deadline;
+  // voting_deadline.setDate(voting_deadline.getDate() + 1);
   if (now < voting_deadline) {
     return ContestMode.VOTING_ON_CAPTIONS;
   }

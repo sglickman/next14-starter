@@ -18,6 +18,7 @@ export type Contest = {
   contest_image_url: string;
   final_contest_deadline: Date;
   first_deadline: Date;
+  voting_deadline: Date;
 };
 
 export type Caption = {

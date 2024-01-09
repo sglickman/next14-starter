@@ -146,8 +146,9 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
     }
     return 0;
   });
-  const contestMode = (ContestMode.SUBMITTING_CAPTIONS ||
-    getContestMode(contest)) as ContestMode;
+  const contestMode = // (ContestMode.VOTING_ON_CAPTIONS ||
+    getContestMode(contest);
+    // ) as ContestMode;
   return (
     <div className={styles.container}>
       <div className={styles.top}>

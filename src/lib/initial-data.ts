@@ -24,6 +24,7 @@ export const contests: Contest[] = [
     contest_name: "Big Clock",
     final_contest_deadline: new Date("2024-01-07 23:59:00-05"),
     first_deadline: new Date("2024-01-03 20:00:00-05"),
+    voting_deadline: new Date("2024-01-04 12:00:00-05")
   },
 ];
 
