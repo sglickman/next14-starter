@@ -48,13 +48,13 @@ const getCaptions = async (contestId: string) => {
   return res.rows as Caption[];
 };
 
-const getTopSevenVotes = async (contestId: string, userId: string) => {
+const getTopSevenVotes = async (contestId: string) => {
   const res = await sql`
     SELECT contest_top_seven_votes.*, contest_captions.contest_id AS contest_id
     FROM contest_top_seven_votes
       INNER JOIN contest_captions
       ON contest_top_seven_votes.caption_id = contest_captions.id
-    WHERE voter = ${parseInt(userId)} AND contest_id = ${parseInt(contestId)};
+    WHERE contest_id = ${parseInt(contestId)};
   `;
   return res.rows as TopSevenVote[];
 };
@@ -85,7 +85,8 @@ const getContestData = async (id: string) => {
   const users = await getUsers();
   const captions = await getCaptions(id);
   const workshops = await getWorkshops(id);
-  const topSevenVotes = await getTopSevenVotes(id, userId);
+  const allTopSevenVotes = await getTopSevenVotes(id);
+  const topSevenVotes = allTopSevenVotes.filter( (vote) => vote.voter === parseInt(userId));
   const captionVoteCounts = await getCaptionVoteCounts(id);
 
   return {
@@ -93,6 +94,7 @@ const getContestData = async (id: string) => {
     users,
     captions,
     workshops,
+    allTopSevenVotes,
     topSevenVotes,
     captionVoteCounts,
   };
@@ -126,6 +128,7 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
     users,
     captions,
     workshops,
+    allTopSevenVotes,
     topSevenVotes,
     captionVoteCounts,
   } = await getContestData(id);
@@ -172,6 +175,13 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
               value={topSevenVotes.length.toString()}
             />
           )}
+          {(contestMode === ContestMode.WORKSHOPPING || contestMode === ContestMode.SUBMITTING || contestMode === ContestMode.CLOSED) && (
+            <ContestDetail
+              title="Votes"
+              value={allTopSevenVotes.length.toString()}
+              />
+          )
+          }
         </div>
         {contestMode === ContestMode.SUBMITTING_CAPTIONS && (
           <CreateCaption contest={contest} session={session} />
