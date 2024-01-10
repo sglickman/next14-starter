@@ -1,7 +1,7 @@
 import { Contest, ContestMode } from "./definitions";
 
 export const getContestMode = (contest: Contest) => {
-  return ContestMode.WORKSHOPPING;
+  // return ContestMode.WORKSHOPPING;
   const now = new Date();
   if (now > contest.final_contest_deadline) {
     return ContestMode.CLOSED;
