@@ -73,12 +73,14 @@ const getCaptionVoteCounts = async (contestId: string) => {
 };
 
 const getWorkshops = async (contestId: string) => {
-  const res = await sql`
-    SELECT contest_workshops.*
-    FROM contest_workshops INNER JOIN contest_captions ON contest_workshops.caption_id = contest_captions.id
-    WHERE contest_captions.contest_id = ${parseInt(contestId)};
-  `;
-  return res.rows as Workshop[];
+  console.log(contestId);
+  return [] as Workshop[];
+  // const res = await sql`
+  //   SELECT contest_workshops.*
+  //   FROM contest_workshops INNER JOIN contest_captions ON contest_workshops.caption_id = contest_captions.id
+  //   WHERE contest_captions.contest_id = ${parseInt(contestId)};
+  // `;
+  // return res.rows as Workshop[];
 };
 
 const getContestData = async (id: string) => {
