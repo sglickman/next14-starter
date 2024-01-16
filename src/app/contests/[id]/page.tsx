@@ -43,7 +43,7 @@ const getCaptions = async (contestId: string) => {
       INNER JOIN contests 
       ON contest_captions.contest_id = contests.id 
     WHERE contest_id = ${parseInt(contestId)}
-    ORDER BY contest_captions.id DESC;
+    ORDER BY contest_captions.created_at DESC;
   `;
   return res.rows as Caption[];
 };
@@ -73,7 +73,12 @@ const getCaptionVoteCounts = async (contestId: string) => {
 };
 
 const getWorkshops = async (contestId: string) => {
-  return [] as Workshop[];
+  const res = await sql`
+    SELECT contest_workshops.*
+    FROM contest_workshops INNER JOIN contest_captions ON contest_workshops.caption_id = contest_captions.id
+    WHERE contest_captions.contest_id = ${parseInt(contestId)};
+  `;
+  return res.rows as Workshop[];
 };
 
 const getContestData = async (id: string) => {
@@ -86,7 +91,9 @@ const getContestData = async (id: string) => {
   const captions = await getCaptions(id);
   const workshops = await getWorkshops(id);
   const allTopSevenVotes = await getTopSevenVotes(id);
-  const topSevenVotes = allTopSevenVotes.filter( (vote) => vote.voter === parseInt(userId));
+  const topSevenVotes = allTopSevenVotes.filter(
+    (vote) => vote.voter === parseInt(userId)
+  );
   const captionVoteCounts = await getCaptionVoteCounts(id);
 
   return {
@@ -149,9 +156,8 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
     }
     return 0;
   });
-  const contestMode = // (ContestMode.VOTING_ON_CAPTIONS ||
-    getContestMode(contest);
-    // ) as ContestMode;
+  const contestMode = getContestMode(contest); // (ContestMode.VOTING_ON_CAPTIONS ||
+  // ) as ContestMode;
   return (
     <div className={styles.container}>
       <div className={styles.top}>
@@ -175,13 +181,14 @@ const SingleContest = async ({ params }: { params: { id: string } }) => {
               value={topSevenVotes.length.toString()}
             />
           )}
-          {(contestMode === ContestMode.WORKSHOPPING || contestMode === ContestMode.SUBMITTING || contestMode === ContestMode.CLOSED) && (
+          {(contestMode === ContestMode.WORKSHOPPING ||
+            contestMode === ContestMode.SUBMITTING ||
+            contestMode === ContestMode.CLOSED) && (
             <ContestDetail
               title="Votes"
               value={allTopSevenVotes.length.toString()}
-              />
-          )
-          }
+            />
+          )}
         </div>
         {contestMode === ContestMode.SUBMITTING_CAPTIONS && (
           <CreateCaption contest={contest} session={session} />
