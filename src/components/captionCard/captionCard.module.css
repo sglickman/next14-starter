@@ -27,6 +27,10 @@
   position: relative;
 }
 
+.imgContainerTall {
+  height: 450px;
+}
+
 .caption {
   font-size: 14pt;
   text-align: center;
@@ -52,11 +56,19 @@
   .imgContainer {
     height: 270px;
   }
+
+  .imgContainerTall {
+    height: 405px;
+  }
 }
 
 @media (max-width: 1366px) {
   .imgContainer {
     height: 270px;
+  }
+
+  .imgContainerTall {
+    height: 405px;
   }
 }
 
@@ -64,22 +76,38 @@
   .imgContainer {
     height: 300px;
   }
+
+  .imgContainerTall {
+    height: 450px;
+  }
 }
 
 @media (max-width: 1024px) {
   .imgContainer {
     height: 235px;
   } 
+
+  .imgContainerTall {
+    height: 352px;
+  }
 }
 
 @media (max-width: 768px) {
   .imgContainer {
     height: 375px;
   }
+
+  .imgContainerTall {
+    height: 562px;
+  }
 }
 
 @media (max-width: 640px) {
   .imgContainer {
     height: 185px;
+  }
+
+  .imgContainerTall {
+    height: 277px;
   }
 }

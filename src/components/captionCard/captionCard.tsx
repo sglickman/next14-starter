@@ -37,6 +37,7 @@ const CaptionCard = ({
 }) => {
   const captionAuthor = users.find((user) => user.id === caption.author);
   const currentuser = { id: parseInt(session?.user?.id || "0") };
+  const captionCardContainerClassName = styles.imgContainer + (contest.image_height > 400 ? " " + styles.imgContainerTall : "");
   const handleCaptionClick = async (id: number) => {
     if (contestMode !== ContestMode.VOTING_ON_CAPTIONS) {
       return;
@@ -67,7 +68,7 @@ const CaptionCard = ({
       }
     >
       <div className={styles.top}>
-        <div className={styles.imgContainer}>
+        <div className={captionCardContainerClassName}>
           <Image
             src={contest.contest_image_url}
             alt={`Cartoon for caption {caption.caption}`}
