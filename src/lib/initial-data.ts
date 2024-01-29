@@ -22,6 +22,7 @@ export const contests: Contest[] = [
     contest_number: "1",
     contest_image_url: "/comics/01-07-2024__240101_a28302_880.jpg",
     contest_name: "Big Clock",
+    image_height: 0,
     final_contest_deadline: new Date("2024-01-07 23:59:00-05"),
     first_deadline: new Date("2024-01-03 20:00:00-05"),
     voting_deadline: new Date("2024-01-04 12:00:00-05")
