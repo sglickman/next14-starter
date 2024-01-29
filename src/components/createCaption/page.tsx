@@ -39,6 +39,8 @@ const CreateCaption = ({
   //   state?.success && router.refresh();
   // }, [state?.success, router]);
 
+  const imgContainerClassName = contest.image_height > 400 ? styles.imgContainerTall : styles.imgContainer;
+
   return (
     <form action={dispatch}>
       <input type="hidden" name="contest_id" value={contest.id} />
@@ -47,7 +49,7 @@ const CreateCaption = ({
         <div className={styles.top}>
           <h1 className={styles.title}>Create Caption</h1>
         </div>
-        <div className={styles.imgContainer}>
+        <div className={imgContainerClassName}>
           <Image
             className={styles.img}
             src={contest.contest_image_url}
