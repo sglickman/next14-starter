@@ -5,7 +5,7 @@ import { Contest } from "@/lib/definitions";
 
 const getContests = async () => {
   const res = await sql`
-    SELECT * FROM contests;
+    SELECT * FROM contests ORDER BY contest_number DESC;
   `;
   return res.rows as Contest[];
 };
